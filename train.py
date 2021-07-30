@@ -37,12 +37,15 @@ def main(
     test_samples = load_samples(test_data, label_mapper)
 
     train_dataloader = DataLoader(train_samples, shuffle=True, batch_size=batch_size)
+    valid_dataloader = DataLoader(valid_samples, shuffle=False, batch_size=batch_size)
+    test_dataloader = DataLoader(test_samples, shuffle=False, batch_size=batch_size)
     train_loss = losses.SoftmaxLoss(
         model=model,
         sentence_embedding_dimension=model.get_sentence_embedding_dimension(),
         num_labels=len(label_mapper)
     )
-    evaluator = evaluation.EmbeddingSimilarityEvaluator.from_input_examples(valid_samples)
+    # See https://github.com/UKPLab/sentence-transformers/issues/27 about how to use LabelAccuracyEvaluator
+    evaluator = evaluation.LabelAccuracyEvaluator(valid_dataloader, softmax_model=train_loss)
     warmup_steps = math.ceil(len(train_dataloader) * 0.1)
 
     model.fit(
@@ -56,10 +59,12 @@ def main(
 
     # Test model
     test_model = SentenceTransformer(output_model)
-    test_evaluator = evaluation.EmbeddingSimilarityEvaluator.from_input_examples(
-        test_samples,
-        batch_size=batch_size
+    test_loss = losses.SoftmaxLoss(
+        model=test_model,
+        sentence_embedding_dimension=test_model.get_sentence_embedding_dimension(),
+        num_labels=len(label_mapper)
     )
+    test_evaluator = evaluation.LabelAccuracyEvaluator(test_dataloader, softmax_model=test_loss)
     Path(output_eval).mkdir(exist_ok=True)
     test_evaluator(test_model, output_path=output_eval)
 
