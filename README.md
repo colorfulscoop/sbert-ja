@@ -30,5 +30,5 @@ Then {train,val,test}.jsonl datasets are prepared under a `data` directory.
 
 
 ```sh
-$ python train.py --base_model colorfulscoop/bert-base-ja --output_model model --output_eval eval --train_data data/train.jsonl --valid_data data/valid.jsonl --test_data data/test.jsonl --epochs 1 --evaluation_steps=1000 --batch_size 8
+$ python3 train.py --base_model colorfulscoop/bert-base-ja --output_model model --output_eval eval --train_data data/train.jsonl --valid_data data/val.jsonl --test_data data/test.jsonl --epochs 1 --evaluation_steps=1000 --batch_size 32
 ```

@@ -5,8 +5,10 @@ if [ ! -e data ]; then
 fi
 
 cd data
-wget -O JSNLI.zip https://nlp.ist.i.kyoto-u.ac.jp/DLcounter/lime.cgi\?down\=https://nlp.ist.i.kyoto-u.ac.jp/nl-resource/JSNLI/jsnli_1.1.zip\&name\=JSNLI.zip
-unzip JSNLI.zip
+if [ ! -e JSNLI.zip ]; then
+    wget -O JSNLI.zip https://nlp.ist.i.kyoto-u.ac.jp/DLcounter/lime.cgi\?down\=https://nlp.ist.i.kyoto-u.ac.jp/nl-resource/JSNLI/jsnli_1.1.zip\&name\=JSNLI.zip
+    unzip JSNLI.zip
+fi
 
 # Convert to jsonl format
 cat jsnli_1.1/train_w_filtering.tsv | python3 ../convert_data_format.py >train_orig.jsonl
