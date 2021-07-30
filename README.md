@@ -22,5 +22,11 @@ Then {train,val,test}.jsonl datasets are prepared under a `data` directory.
 ## Train
 
 ```sh
-$ python train.py --base_model colorfulscoop/bert-base-ja --output_model model --output_eval eval --train_data data_test/train.jsonl --valid_data data_test/valid.jsonl --test_data data_test/test.jsonl --epochs 1 --evaluation_steps=5 --batch_size 2
+docker container run --gpus all --ipc=host --rm -it -v $(pwd):/work -w /work nvidia/cuda:11.1-devel-ubuntu20.04 bash
+pip3 install torch==1.8.1+cu111 -f https://download.pytorch.org/whl/torch_stable.html
+pip3 install -r requirements.txt
+```
+
+```sh
+$ python train.py --base_model colorfulscoop/bert-base-ja --output_model model --output_eval eval --train_data data/train.jsonl --valid_data data/valid.jsonl --test_data data/test.jsonl --epochs 1 --evaluation_steps=1000 --batch_size 8
 ```
