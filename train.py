@@ -70,7 +70,7 @@ def main(
         num_labels=len(label_mapper)
     )
     test_evaluator = evaluation.LabelAccuracyEvaluator(test_dataloader, softmax_model=test_loss, name="test")
-    test_evaluator(test_model, output_path=output_model)
+    test_evaluator(test_model, output_path=output_model+"/eval")
 
 
 if __name__ == "__main__":
