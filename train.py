@@ -6,7 +6,9 @@ from sentence_transformers import SentenceTransformer, InputExample, losses, eva
 from torch.utils.data import DataLoader
 import math
 import json
+import os
 import transformers
+import logging
 
 
 def load_samples(jsonl_file, label_mapper):
@@ -23,6 +25,8 @@ def main(
     epochs=1, evaluation_steps=1000, batch_size=8, seed=None,
     use_amp=False,
 ):
+    logging.basicConfig(level=logging.INFO)
+
     if seed:
         transformers.trainer_utils.set_seed(0)
 
@@ -43,17 +47,17 @@ def main(
     train_dataloader = DataLoader(train_samples, shuffle=True, batch_size=batch_size)
     valid_dataloader = DataLoader(valid_samples, shuffle=False, batch_size=batch_size)
     test_dataloader = DataLoader(test_samples, shuffle=False, batch_size=batch_size)
-    train_loss = losses.SoftmaxLoss(
+    loss = losses.SoftmaxLoss(
         model=model,
         sentence_embedding_dimension=model.get_sentence_embedding_dimension(),
         num_labels=len(label_mapper)
     )
     # See https://github.com/UKPLab/sentence-transformers/issues/27 about how to use LabelAccuracyEvaluator
-    evaluator = evaluation.LabelAccuracyEvaluator(valid_dataloader, softmax_model=train_loss, name="val")
+    evaluator = evaluation.LabelAccuracyEvaluator(valid_dataloader, softmax_model=loss, name="val")
     warmup_steps = math.ceil(len(train_dataloader) * 0.1)
 
     model.fit(
-        train_objectives=[(train_dataloader, train_loss)],
+        train_objectives=[(train_dataloader, loss)],
         evaluator=evaluator,
         epochs=epochs,
         evaluation_steps=evaluation_steps,
@@ -64,13 +68,9 @@ def main(
 
     # Test model
     test_model = SentenceTransformer(output_model)
-    test_loss = losses.SoftmaxLoss(
-        model=test_model,
-        sentence_embedding_dimension=test_model.get_sentence_embedding_dimension(),
-        num_labels=len(label_mapper)
-    )
-    test_evaluator = evaluation.LabelAccuracyEvaluator(test_dataloader, softmax_model=test_loss, name="test")
-    test_evaluator(test_model, output_path=output_model+"/eval")
+    loss.model = test_model
+    test_evaluator = evaluation.LabelAccuracyEvaluator(test_dataloader, softmax_model=loss, name="test")
+    test_evaluator(test_model, output_path=os.path.join(output_model, "eval"))
 
 
 if __name__ == "__main__":
