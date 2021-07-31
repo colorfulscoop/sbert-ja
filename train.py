@@ -68,6 +68,7 @@ def main(
 
     # Test model
     test_model = SentenceTransformer(output_model)
+    test_model.to(model.device)
     loss.model = test_model
     test_evaluator = evaluation.LabelAccuracyEvaluator(test_dataloader, softmax_model=loss, name="test")
     test_evaluator(test_model, output_path=os.path.join(output_model, "eval"))
