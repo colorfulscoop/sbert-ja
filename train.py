@@ -6,7 +6,7 @@ from sentence_transformers import SentenceTransformer, InputExample, losses, eva
 from torch.utils.data import DataLoader
 import math
 import json
-from pathlib import Path
+import transformers
 
 
 def load_samples(jsonl_file, label_mapper):
@@ -19,9 +19,12 @@ def load_samples(jsonl_file, label_mapper):
 
 
 def main(
-    base_model, output_model, output_eval, train_data, valid_data, test_data,
-    epochs=1, evaluation_steps=1000, batch_size=8
+    base_model, output_model, train_data, valid_data, test_data,
+    epochs=1, evaluation_steps=10000, batch_size=8, seed=None,
 ):
+    if seed:
+        transformers.trainer_utils.set_seed(0)
+
     # Prepare model
     model = SentenceTransformer(base_model)
 
@@ -65,8 +68,7 @@ def main(
         num_labels=len(label_mapper)
     )
     test_evaluator = evaluation.LabelAccuracyEvaluator(test_dataloader, softmax_model=test_loss)
-    Path(output_eval).mkdir(exist_ok=True)
-    test_evaluator(test_model, output_path=output_eval)
+    test_evaluator(test_model, output_path=output_model)
 
 
 if __name__ == "__main__":
