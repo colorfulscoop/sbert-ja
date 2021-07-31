@@ -20,7 +20,8 @@ def load_samples(jsonl_file, label_mapper):
 
 def main(
     base_model, output_model, train_data, valid_data, test_data,
-    epochs=1, evaluation_steps=10000, batch_size=8, seed=None,
+    epochs=1, evaluation_steps=1000, batch_size=8, seed=None,
+    use_amp=False,
 ):
     if seed:
         transformers.trainer_utils.set_seed(0)
@@ -58,6 +59,7 @@ def main(
         evaluation_steps=evaluation_steps,
         warmup_steps=warmup_steps,
         output_path=output_model,
+        use_amp=use_amp,
     )
 
     # Test model
