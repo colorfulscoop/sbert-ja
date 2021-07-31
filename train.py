@@ -48,7 +48,7 @@ def main(
         num_labels=len(label_mapper)
     )
     # See https://github.com/UKPLab/sentence-transformers/issues/27 about how to use LabelAccuracyEvaluator
-    evaluator = evaluation.LabelAccuracyEvaluator(valid_dataloader, softmax_model=train_loss)
+    evaluator = evaluation.LabelAccuracyEvaluator(valid_dataloader, softmax_model=train_loss, name="val")
     warmup_steps = math.ceil(len(train_dataloader) * 0.1)
 
     model.fit(
@@ -67,7 +67,7 @@ def main(
         sentence_embedding_dimension=test_model.get_sentence_embedding_dimension(),
         num_labels=len(label_mapper)
     )
-    test_evaluator = evaluation.LabelAccuracyEvaluator(test_dataloader, softmax_model=test_loss)
+    test_evaluator = evaluation.LabelAccuracyEvaluator(test_dataloader, softmax_model=test_loss, name="test")
     test_evaluator(test_model, output_path=output_model)
 
 

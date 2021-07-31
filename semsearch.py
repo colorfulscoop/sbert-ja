@@ -8,7 +8,7 @@ def main(model, top_k=3):
         "海外旅行に行くのが趣味です",
         "天ぷらが食べたい",
         "りんごが食べたい",
-        "揚げ物は嫌い",
+        "揚げ物は食べたくない",
         "今日は天気がいいです",
     ]
     model = SentenceTransformer(model)
