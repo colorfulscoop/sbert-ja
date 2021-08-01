@@ -20,9 +20,7 @@ This repository contains a Sentence BERT base model for Japanese.
 
 ## Pretrained model
 
-Pretrained BERT model [colorfulscoop/bert-base-ja](https://huggingface.co/colorfulscoop/bert-base-ja) v1.0 is used
-
-This model is trained on Japanese Wikipedia data and relased under [Creative Commons Attribution-ShareAlike 3.0](https://creativecommons.org/licenses/by-sa/3.0/) .
+This model utilizes a Japanese BERT model [colorfulscoop/bert-base-ja](https://huggingface.co/colorfulscoop/bert-base-ja) v1.0 released under [Creative Commons Attribution-ShareAlike 3.0](https://creativecommons.org/licenses/by-sa/3.0/) as a pretrained model.
 
 ## Training data
 
@@ -36,11 +34,12 @@ Original training dataset is splitted into train/valid dataset. Finally, follwoi
 
 ## Model description
 
-`SentenceTransformer` model from the [sentence-transformers](https://github.com/UKPLab/sentence-transformers) library is used for training.
+This model utilizes `SentenceTransformer` model from the [sentence-transformers](https://github.com/UKPLab/sentence-transformers) .
 The model detail is as below.
 
 ```py
->>> sentence_transformers.SentenceTransformer("colorfulscoop/sbert-base-ja")
+>>> from sentence_transformers import SentenceTransformer
+>>> SentenceTransformer("colorfulscoop/sbert-base-ja")
 SentenceTransformer(
   (0): Transformer({'max_seq_length': 512, 'do_lower_case': False}) with Transformer model: BertModel
   (1): Pooling({'word_embedding_dimension': 768, 'pooling_mode_cls_token': False, 'pooling_mode_mean_tokens': True, 'pooling_mode_max_tokens': False, 'pooling_mode_mean_sqrt_len_tokens': False})
